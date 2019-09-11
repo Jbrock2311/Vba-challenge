@@ -1,0 +1,83 @@
+Attribute VB_Name = "Module1"
+Sub homework2():
+
+For Each ws In Worksheets
+
+'Set initial variable for holding Ticker Name, last row, Vol, Open, Close, yearly change, % change
+Dim tickername As String
+Dim lastrow As Long
+lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+Dim totalvol As Double
+Dim openval As Double
+Dim lastopen As Double
+lastopen = 2
+Dim closedval As Double
+Dim yearlychange As Double
+Dim percentchange As Double
+
+
+'Keep track of the location for each Ticker name in the ticker column
+Dim ticker_name_row As Long
+ticker_name_row = 2
+
+'Column Titles
+ws.Range("I1").Value = "Ticker"
+ws.Range("L1").Value = "Total Stock Volume"
+ws.Range("J1").Value = "Yearly Change"
+ws.Range("K1").Value = "Percent Change"
+
+    'Loop through all needs
+    For i = 2 To lastrow
+
+        totalvol = totalvol + ws.Cells(i, 7).Value
+         
+        'Check if information is the same as prior row
+        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+    
+        'Set Values
+        tickername = ws.Cells(i, 1).Value
+
+        openval = ws.Cells(lastopen, 3).Value
+        closedval = ws.Cells(i, 6).Value
+        yearlychange = closedval - openval
+        
+        'Print results in cells
+        ws.Cells(ticker_name_row, 9).Value = tickername
+        ws.Cells(ticker_name_row, 12).Value = totalvol
+        ws.Cells(ticker_name_row, 10).Value = yearlychange
+        
+            'Percent Change
+            If openval = 0 Then
+                percentchange = 0
+            Else
+                openval = ws.Cells(lastopen, 3)
+                percentchange = yearlychange / openval
+            End If
+            
+            'Print results in cells
+            ws.Cells(ticker_name_row, 11).Value = percentchange
+
+        
+            'Cell Formatting
+            If ws.Cells(ticker_name_row, 10).Value >= 0 Then
+                ws.Cells(ticker_name_row, 10).Interior.ColorIndex = 4
+            Else
+                ws.Cells(ticker_name_row, 10).Interior.ColorIndex = 3
+            End If
+        
+        'Add one to the row
+        ticker_name_row = ticker_name_row + 1
+        
+        'Reset Vol total
+        totalvol = 0
+
+        'Next open
+        lastopen = i + 1
+        
+    End If
+    
+ Next i
+ 
+Next ws
+
+End Sub
